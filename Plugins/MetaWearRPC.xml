@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MetaWearRPC</name>
+    </assembly>
+    <members>
+        <member name="F:MetaWearRPC.Global.ServerPort">
+            <summary>
+            Server port. 
+            Make sure to unblock this in your router firewall if you want to allow external connections.
+            </summary>
+        </member>
+        <member name="M:MetaWearRPC.Global.MacFromString(System.String)">
+            <summary>
+            Convert a Mac Address of Type "F6:E9:DD:B4:CF:4A" to one of type F6E9DDB4CF4A.
+            </summary>
+        </member>
+        <member name="M:MetaWearRPC.Global.MacToString(System.UInt64)">
+            <summary>
+            Convert a Mac Address of Type F6E9DDB4CF4A to one of type "F6:E9:DD:B4:CF:4A".
+            </summary>
+        </member>
+        <member name="M:MetaWearRPC.Global.RunSynchronously``1(System.Threading.Tasks.Task{``0})">
+            <summary>
+            Run a task having a return value synchronously.
+            </summary>
+        </member>
+        <member name="T:MetaWearRPC.IMetaWearContract">
+            <summary>
+            Interface (contract) for RPC client-server interaction.
+            </summary>
+        </member>
+        <member name="M:MetaWearRPC.IMetaWearContract.InitBoard(System.UInt64)">
+            <summary>
+            Initialize the MetaWearBoard with the given mac address.
+            </summary>
+        </member>
+        <member name="M:MetaWearRPC.IMetaWearContract.CloseBoard(System.UInt64)">
+            <summary>
+            Close the MetaWearBoard with the given mac address.
+            </summary>
+        </member>
+        <member name="M:MetaWearRPC.IMetaWearContract.GetBoardModel(System.UInt64)">
+            <summary>
+            Return a description of the MetaWearBoard with the given mac address.
+            </summary>
+        </member>
+        <member name="M:MetaWearRPC.IMetaWearContract.GetBatteryLevel(System.UInt64)">
+            <summary>
+            Return the battery level of the MetaWearBoard with the given mac address.
+            </summary>
+        </member>
+        <member name="M:MetaWearRPC.IMetaWearContract.StartMotor(System.UInt64,System.UInt16,System.Single)">
+            <summary>
+            Start pulsing a motor on the MetaWearBoard with the given mac address.
+            </summary>
+            <param name="pDurationMs">How long to run the motor, in milliseconds (ms)</param>
+            <param name="pIntensity">Strength of the motor [0.0f ; 100.0f]</param>
+        </member>
+        <member name="M:MetaWearRPC.IMetaWearContract.StartBuzzer(System.UInt64,System.UInt16)">
+            <summary>
+            Start pulsing a buzzer on the MetaWearBoard with the given mac address.
+            </summary>
+            <param name="pDurationMs">How long to run the buzzer, in milliseconds (ms)</param>
+        </member>
+        <member name="T:MetaWearRPC.MetaWearRPC_Client">
+            <summary>
+            Connect to a MetaWearRPC_Server to control some MetaWear's Boards.
+            The MetaWearRPC_Server is responsible for handling the bluetooth connections that doesn't work with Unity3D on Windows platforms.
+            https://mbientlab.com/community/discussion/2601/unity-works-perfectly-with-metawear-sensor-on-first-run-hangs-on-2nd-run
+            Usage: 
+            1) Connect()
+            2) You can safely call IMetaWearContract's Methods between Connect() and Disconnect().
+            3) Disconnect()
+            </summary>
+        </member>
+        <member name="F:MetaWearRPC.MetaWearRPC_Client._client">
+            <summary>
+            The client.
+            </summary>
+        </member>
+        <member name="P:MetaWearRPC.MetaWearRPC_Client.IsConnected">
+            <summary>
+            Return wether the client is currently connected to the RPC Server.
+            </summary>
+        </member>
+        <member name="M:MetaWearRPC.MetaWearRPC_Client.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="M:MetaWearRPC.MetaWearRPC_Client.Connect(System.String)">
+            <summary>
+            Connect to the RPC Server.
+            </summary>
+        </member>
+        <member name="M:MetaWearRPC.MetaWearRPC_Client.Disconnect">
+            <summary>
+            Disconnect from the RPC Server.
+            </summary>
+        </member>
+    </members>
+</doc>
