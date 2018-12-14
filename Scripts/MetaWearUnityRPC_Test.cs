@@ -4,65 +4,61 @@ namespace MetaWearRPC.Unity
 {
 	public sealed class MetaWearUnityRPC_Test : MetaWearUnityRPC
 	{
-		public string testBoardMac = "F6:E9:DD:B4:CF:4A";
-		private ulong _testBoardMac;
-
-		public ushort vibrationDurationMs = 1;
-		public float vibrationIntensity = 100.0f;
-
 		/// <summary>
 		/// The list of reachable MetaWear boards.
 		/// </summary>
-		//public List<string> metaWearBoards = new List<string>
-		//{
-		//	"F6:E9:DD:B4:CF:4A",
-		//	"D2:80:93:BC:8C:FD",
-		//	"DF:16:4D:D1:5D:58",
-		//	"C2:48:ED:96:3B:74"
-		//};
-
-		protected override void Awake()
+		public string[] boardsMac = new string[]
 		{
-			base.Awake();
+			"F6:E9:DD:B4:CF:4A",
+			"D2:80:93:BC:8C:FD",
+			"DF:16:4D:D1:5D:58",
+			"C2:48:ED:96:3B:74"
+		};
 
-			_testBoardMac = Global.MacFromString(testBoardMac);
-			Debug.Log("[MetaWearUnityRPC_Test] Board Mac address : " + _testBoardMac);
-		}
+		/// <summary>
+		/// The board that currently receive commands.
+		/// </summary>
+		[Range(0, 3)]
+		public int currentBoardIndex = 0;
+		[Range(0.0f, 100.0f)]
+		public float vibrationIntensity = 100.0f;
+		public ushort vibrationBuzzDurationMs = 200;
+		public ushort vibrationPatternSleepDurationMs = 110;
+		public int vibrationPatternIterations = 5;
 
 		protected override void Update()
 		{
 			base.Update();
 
-			if(Input.GetKeyUp(KeyCode.Keypad0))
+			string boardStr = boardsMac[currentBoardIndex];
+			ulong board = Global.MacFromString(boardStr);
+
+			if (Input.GetKeyUp(KeyCode.Keypad0))
 			{
-				Client.CloseBoard(_testBoardMac);
-				Debug.Log("[MetaWearUnityRPC_Test] Board " + testBoardMac + " closed.");
+				string model = Client.GetBoardModel(board);
+				Debug.Log("[MetaWearUnityRPC_Test] Board " + boardStr + " model is : " + model);
 			}
-			else if(Input.GetKeyUp(KeyCode.Keypad1))
+			else if (Input.GetKeyUp(KeyCode.Keypad1))
 			{
-				Client.InitBoard(_testBoardMac);
-				Debug.Log("[MetaWearUnityRPC_Test] Board " + testBoardMac + " initialized.");
+				byte batLevel = Client.GetBatteryLevel(board);
+				Debug.Log("[MetaWearUnityRPC_Test] Board " + boardStr + " battery left : " + batLevel);
 			}
-			else if (Input.GetKeyUp(KeyCode.Keypad2))
+			else if(Input.GetKeyUp(KeyCode.Keypad2))
 			{
-				string model = Client.GetBoardModel(_testBoardMac);
-				Debug.Log("[MetaWearUnityRPC_Test] Board " + testBoardMac + " model is : " + model);
+				Client.StartBuzzer(board, vibrationBuzzDurationMs);
+				Debug.Log("[MetaWearUnityRPC_Test] Board " + boardStr + " buzzering " + vibrationBuzzDurationMs + " ms");
 			}
-			else if (Input.GetKeyUp(KeyCode.Keypad3))
+			else if (Input.GetKeyUp(KeyCode.Keypad4))
 			{
-				byte batLevel = Client.GetBatteryLevel(_testBoardMac);
-				Debug.Log("[MetaWearUnityRPC_Test] Board " + testBoardMac + " battery left : " + batLevel);
-			}
-			else if(Input.GetKeyUp(KeyCode.Keypad4))
-			{
-				Client.StartBuzzer(_testBoardMac, vibrationDurationMs);
-				Debug.Log("[MetaWearUnityRPC_Test] Board " + testBoardMac + " buzzering for " + vibrationDurationMs + " ms");
+				Client.StartMotor(board, vibrationBuzzDurationMs, vibrationIntensity);
+				Debug.Log("[MetaWearUnityRPC_Test] Board " + boardStr + " vibrating " + vibrationBuzzDurationMs + " ms");
 			}
 			else if (Input.GetKeyUp(KeyCode.Keypad5))
 			{
-				Client.StartMotor(_testBoardMac, vibrationDurationMs, vibrationIntensity);
-				Debug.Log("[MetaWearUnityRPC_Test] Board " + testBoardMac + " vibration for " + vibrationDurationMs + " ms");
+				Client.StartMotorPattern(board, vibrationBuzzDurationMs, vibrationIntensity, vibrationPatternSleepDurationMs, vibrationPatternIterations);
+				Debug.Log("[MetaWearUnityRPC_Test] Board " + boardStr + " vibrating " + vibrationPatternIterations + " times");
 			}
+
 		}
 	}
 }

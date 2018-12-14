@@ -43,18 +43,6 @@ namespace MetaWearRPC.Unity
 				}
 				_elapsedTime = 0.0f;
 			}
-
-			// Watcher is always runnning, even in Pause.
-			//if(Input.GetKeyUp(KeyCode.Keypad0))
-			//{
-			//	Time.timeScale = 0.0f;
-			//	Debug.Log("[MetaWearUnityRPC] Pause On");
-			//}
-			//else if(Input.GetKeyUp(KeyCode.Keypad1))
-			//{
-			//	Time.timeScale = 1.0f;
-			//	Debug.Log("[MetaWearUnityRPC] Pause Off");
-			//}
 		}
 
 		protected virtual void OnApplicationQuit()
@@ -77,7 +65,7 @@ namespace MetaWearRPC.Unity
 			}
 			catch (Exception e)
 			{
-				Debug.LogError("[MetaWearUnityRPC] Error : " + e.Message);
+				Debug.LogWarning("[MetaWearUnityRPC] Error : " + e.Message);
 			}
 		}
 	}

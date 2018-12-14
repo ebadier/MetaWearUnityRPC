@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>MetaWearRPC</name>
+        <name>MetaWearRPC.Net4.6</name>
     </assembly>
     <members>
         <member name="F:MetaWearRPC.Global.ServerPort">
@@ -12,12 +12,12 @@
         </member>
         <member name="M:MetaWearRPC.Global.MacFromString(System.String)">
             <summary>
-            Convert a Mac Address of Type "F6:E9:DD:B4:CF:4A" to one of type F6E9DDB4CF4A.
+            Convert a Mac Address from its string representation to its hexadecimal representation.
             </summary>
         </member>
         <member name="M:MetaWearRPC.Global.MacToString(System.UInt64)">
             <summary>
-            Convert a Mac Address of Type F6E9DDB4CF4A to one of type "F6:E9:DD:B4:CF:4A".
+            Convert a Mac Address from its hexadecimal representation to its string representation.
             </summary>
         </member>
         <member name="M:MetaWearRPC.Global.RunSynchronously``1(System.Threading.Tasks.Task{``0})">
@@ -28,16 +28,6 @@
         <member name="T:MetaWearRPC.IMetaWearContract">
             <summary>
             Interface (contract) for RPC client-server interaction.
-            </summary>
-        </member>
-        <member name="M:MetaWearRPC.IMetaWearContract.InitBoard(System.UInt64)">
-            <summary>
-            Initialize the MetaWearBoard with the given mac address.
-            </summary>
-        </member>
-        <member name="M:MetaWearRPC.IMetaWearContract.CloseBoard(System.UInt64)">
-            <summary>
-            Close the MetaWearBoard with the given mac address.
             </summary>
         </member>
         <member name="M:MetaWearRPC.IMetaWearContract.GetBoardModel(System.UInt64)">
@@ -57,6 +47,16 @@
             <param name="pDurationMs">How long to run the motor, in milliseconds (ms)</param>
             <param name="pIntensity">Strength of the motor [0.0f ; 100.0f]</param>
         </member>
+        <member name="M:MetaWearRPC.IMetaWearContract.StartMotorPattern(System.UInt64,System.UInt16,System.Single,System.UInt16,System.Int32)">
+            <summary>
+            Start pulsing a motor a defined number of times on the MetaWearBoard with the given mac address.
+            </summary>
+            <param name="pMacAdress"></param>
+            <param name="pDurationMs">How long are the iterations of the motor pattern, in milliseconds (ms)</param>
+            <param name="pIntensity">Strength of the motor pattern iterations [0.0f ; 100.0f]</param>
+            <param name="pSleepMs">How long to wait between each iterations</param>
+            <param name="pPatternIterations">The number of iterations</param>
+        </member>
         <member name="M:MetaWearRPC.IMetaWearContract.StartBuzzer(System.UInt64,System.UInt16)">
             <summary>
             Start pulsing a buzzer on the MetaWearBoard with the given mac address.
@@ -70,7 +70,7 @@
             https://mbientlab.com/community/discussion/2601/unity-works-perfectly-with-metawear-sensor-on-first-run-hangs-on-2nd-run
             Usage: 
             1) Connect()
-            2) You can safely call IMetaWearContract's Methods between Connect() and Disconnect().
+            2) Safely call IMetaWearContract's Methods between Connect() and Disconnect().
             3) Disconnect()
             </summary>
         </member>
