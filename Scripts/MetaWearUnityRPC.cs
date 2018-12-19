@@ -13,13 +13,19 @@ namespace MetaWearRPC.Unity
 		public string serverAddress = "127.0.0.1";
 
 		/// <summary>
+		/// The list of MetaWear boards mac adresses we need to command.
+		/// </summary>
+		[SerializeField]
+		protected string[] _boardsMac;
+		public string[] BoardsMac { get { return _boardsMac; } }
+
+		protected ulong[] _boards;
+		public ulong[] Boards { get { return _boards; } }
+
+		/// <summary>
 		/// Are we trying to reconnect in case of disconnection ?
 		/// </summary>
 		public bool watchForConnection = true;
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public float watchForConnectionInterval = 5.0f;
 		private float _elapsedTime;
 
@@ -27,6 +33,12 @@ namespace MetaWearRPC.Unity
 
 		protected virtual void Awake()
 		{
+			_boards = new ulong[_boardsMac.Length];
+			for (int i = 0; i < 4; ++i)
+			{
+				_boards[i] = Global.MacFromString(_boardsMac[i]);
+			}
+
 			_elapsedTime = 0.0f;
 			Client = new MetaWearRPC_Client();
 			_Connect();

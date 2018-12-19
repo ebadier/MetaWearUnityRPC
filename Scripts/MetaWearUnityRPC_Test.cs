@@ -5,17 +5,6 @@ namespace MetaWearRPC.Unity
 	public sealed class MetaWearUnityRPC_Test : MetaWearUnityRPC
 	{
 		/// <summary>
-		/// The list of reachable MetaWear boards.
-		/// </summary>
-		public string[] boardsMac = new string[]
-		{
-			"F6:E9:DD:B4:CF:4A",
-			"D2:80:93:BC:8C:FD",
-			"DF:16:4D:D1:5D:58",
-			"C2:48:ED:96:3B:74"
-		};
-
-		/// <summary>
 		/// The board that currently receive commands.
 		/// </summary>
 		[Range(0, 3)]
@@ -30,8 +19,8 @@ namespace MetaWearRPC.Unity
 		{
 			base.Update();
 
-			string boardStr = boardsMac[currentBoardIndex];
-			ulong board = Global.MacFromString(boardStr);
+			string boardStr = _boardsMac[currentBoardIndex];
+			ulong board = _boards[currentBoardIndex];
 
 			if (Input.GetKeyUp(KeyCode.Keypad0))
 			{
@@ -43,7 +32,7 @@ namespace MetaWearRPC.Unity
 				byte batLevel = Client.GetBatteryLevel(board);
 				Debug.Log("[MetaWearUnityRPC_Test] Board " + boardStr + " battery left : " + batLevel);
 			}
-			else if(Input.GetKeyUp(KeyCode.Keypad2))
+			else if (Input.GetKeyUp(KeyCode.Keypad2))
 			{
 				Client.StartBuzzer(board, vibrationBuzzDurationMs);
 				Debug.Log("[MetaWearUnityRPC_Test] Board " + boardStr + " buzzering " + vibrationBuzzDurationMs + " ms");
