@@ -9,10 +9,33 @@ namespace MetaWearRPC.Unity
 		private MetaWearUnityRPC _metaWearUnity;
 		[SerializeField]
 		private Text _statusText;
+		[Tooltip("You could prefer to update status manually to avoid sending battery requests too much on MetaWear boards")]
+		public bool autoUpdate = true;
 
 		private float _elapsedTime;
 		private int _currentBoardIndex;
 		private string[] _boardsStatus;
+
+		/// <summary>
+		/// Call it yourself when autoUpdate = false.
+		/// </summary>
+		public void UpdateStatus()
+		{
+			bool connected = _metaWearUnity.Client.IsConnected;
+			string status = connected ? "<color=green><b>RPC Server connected</b></color>" : "<color=red><b>RPC Server disconnected</b></color>";
+			if (connected)
+			{
+				// Update boards status one by one (to avoid sending too much battery requests) every watchForConnectionInterval.
+				_boardsStatus[_currentBoardIndex] = _GetBoardStatus(_currentBoardIndex);
+				// Always show the complete status.
+				foreach (string boardStatus in _boardsStatus)
+				{
+					status += "\n" + boardStatus;
+				}
+			}
+			_statusText.text = status;
+			_currentBoardIndex = (++_currentBoardIndex) % _metaWearUnity.BoardsMac.Length;
+		}
 
 		private void Start()
 		{
@@ -36,24 +59,14 @@ namespace MetaWearRPC.Unity
 
 		private void Update()
 		{
-			_elapsedTime += Time.unscaledDeltaTime;
-			if (_elapsedTime >= _metaWearUnity.watchForConnectionInterval)
+			if(autoUpdate)
 			{
-				bool connected = _metaWearUnity.Client.IsConnected;
-				string status = connected ? "<color=green><b>RPC Server connected</b></color>" : "<color=red><b>RPC Server disconnected</b></color>";
-				if (connected)
+				_elapsedTime += Time.unscaledDeltaTime;
+				if (_elapsedTime >= _metaWearUnity.watchForConnectionInterval)
 				{
-					// Update boards status one by one (to avoid sending too much battery requests) every watchForConnectionInterval.
-					_boardsStatus[_currentBoardIndex] = _GetBoardStatus(_currentBoardIndex);
-					// Always show the complete status.
-					foreach(string boardStatus in _boardsStatus)
-					{
-						status += "\n" + boardStatus;
-					}
+					UpdateStatus();
+					_elapsedTime = 0.0f;
 				}
-				_statusText.text = status;
-				_currentBoardIndex = (++_currentBoardIndex) % _metaWearUnity.BoardsMac.Length;
-				_elapsedTime = 0.0f;
 			}
 		}
 
