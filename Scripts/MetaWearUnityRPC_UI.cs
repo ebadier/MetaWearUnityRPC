@@ -10,7 +10,9 @@ namespace MetaWearRPC.Unity
 		[SerializeField]
 		private Text _statusText;
 		[Tooltip("You could prefer to update status manually to avoid sending battery requests too much on MetaWear boards")]
-		public bool autoUpdate = true;
+		public bool autoUpdate = false;
+		[Tooltip("You could prefer to update status partially to avoid sending battery requests too much on MetaWear boards")]
+		public bool partialUpdate = true;
 
 		private float _elapsedTime;
 		private int _currentBoardIndex;
@@ -20,6 +22,59 @@ namespace MetaWearRPC.Unity
 		/// Call it yourself when autoUpdate = false.
 		/// </summary>
 		public void UpdateStatus()
+		{
+			if(!autoUpdate)
+			{
+				if (partialUpdate)
+				{
+					_UpdateNextBoardStatus();
+				}
+				else
+				{
+					_UpdateAllBoardsStatus();
+				}
+			}
+		}
+
+		private void Start()
+		{
+			_elapsedTime = 0.0f;
+			_currentBoardIndex = 0;
+			_boardsStatus = new string[_metaWearUnity.BoardsMac.Length];
+
+			// Show all boards status at start.
+			_UpdateAllBoardsStatus();
+		}
+
+		private void Update()
+		{
+			if(autoUpdate)
+			{
+				_elapsedTime += Time.unscaledDeltaTime;
+				if (_elapsedTime >= _metaWearUnity.watchForConnectionInterval)
+				{
+					UpdateStatus();
+					_elapsedTime = 0.0f;
+				}
+			}
+		}
+
+		private void _UpdateAllBoardsStatus()
+		{
+			bool connected = _metaWearUnity.Client.IsConnected;
+			string status = connected ? "<color=green><b>RPC Server connected</b></color>" : "<color=red><b>RPC Server disconnected</b></color>";
+			if (connected)
+			{
+				for (int i = 0; i < _metaWearUnity.BoardsMac.Length; ++i)
+				{
+					_boardsStatus[i] = _GetBoardStatus(i);
+					status += "\n" + _boardsStatus[i];
+				}
+			}
+			_statusText.text = status;
+		}
+
+		private void _UpdateNextBoardStatus()
 		{
 			bool connected = _metaWearUnity.Client.IsConnected;
 			string status = connected ? "<color=green><b>RPC Server connected</b></color>" : "<color=red><b>RPC Server disconnected</b></color>";
@@ -35,39 +90,6 @@ namespace MetaWearRPC.Unity
 			}
 			_statusText.text = status;
 			_currentBoardIndex = (++_currentBoardIndex) % _metaWearUnity.BoardsMac.Length;
-		}
-
-		private void Start()
-		{
-			_elapsedTime = 0.0f;
-			_currentBoardIndex = 0;
-			_boardsStatus = new string[_metaWearUnity.BoardsMac.Length];
-
-			// Show all boards status at start.
-			bool connected = _metaWearUnity.Client.IsConnected;
-			string status = connected ? "<color=green><b>RPC Server connected</b></color>" : "<color=red><b>RPC Server disconnected</b></color>";
-			if (connected)
-			{
-				for (int i = 0; i < _metaWearUnity.BoardsMac.Length; ++i)
-				{
-					_boardsStatus[i] = _GetBoardStatus(i);
-					status += "\n" + _boardsStatus[i];
-				}
-			}
-			_statusText.text = status;
-		}
-
-		private void Update()
-		{
-			if(autoUpdate)
-			{
-				_elapsedTime += Time.unscaledDeltaTime;
-				if (_elapsedTime >= _metaWearUnity.watchForConnectionInterval)
-				{
-					UpdateStatus();
-					_elapsedTime = 0.0f;
-				}
-			}
 		}
 
 		private string _GetBoardStatus(int pBoardIndex)
