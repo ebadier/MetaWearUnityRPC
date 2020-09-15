@@ -3,7 +3,7 @@ An example of RPC client to use in Unity3D (version >= 2017) to control MetaWear
 
 See Project MetaWear RPC Server for details: https://github.com/ebadier/MetaWearRPCServer
 
-## License
+# License
 MIT License
 
 Copyright (c) 2020  
